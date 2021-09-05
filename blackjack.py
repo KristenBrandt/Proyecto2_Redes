@@ -108,7 +108,7 @@ card10 = [ diamond10, club10, heart10, spade10, \
             diamondJ, clubJ, heartJ, spadeJ, \
             diamondQ, clubQ, heartQ, spadeQ, \
             diamondK, clubK, heartK, spadeK ]
-
+#Modificar getAmt para darnos el color, valor y simbolo
 def getAmt(card):
     ''' Returns the amount the card is worth.
 E.g. Ace is default 11. 10/Jack/Queen/King is 10.'''
@@ -133,7 +133,7 @@ E.g. Ace is default 11. 10/Jack/Queen/King is 10.'''
     elif card in card10:
         return 10
     else:
-        print 'getAmt broke'
+        print ('getAmt broke')
         exit()
 
 def genCard(cList, xList):
@@ -146,7 +146,7 @@ Returns if card is Ace and the card itself.'''
     if card in cardA:
         cA = 1
     return card, cA
-
+#Modificar initgame para 
 def initGame(cList, uList, dList):
     '''Generates two cards for dealer and user, one at a time for each.
 Returns if card is Ace and the total amount of the cards per person.'''
@@ -212,7 +212,7 @@ def main():
                 card, cA = genCard(ccards, userCard)
                 userA += cA
                 userSum += getAmt(card)
-                print 'User: %i' % userSum
+                print ('User: %i' % userSum)
                 while userSum > 21 and userA > 0:
                     userA -= 1
                     userSum -= 10
@@ -223,7 +223,7 @@ def main():
                     card, cA = genCard(ccards, dealCard)
                     dealA += cA
                     dealSum += getAmt(card)
-                    print 'Dealer: %i' % dealSum
+                    print ('Dealer: %i' % dealSum)
                     while dealSum > 21 and dealA > 0:
                         dealA -= 1
                         dealSum -= 10
