@@ -2,9 +2,8 @@
 Universidad del Valle de Guatemala
 Seccion 10
 Ing. Jorge Yass
-Mario Perdomo  18029
 main.py
-Proposito: GUi del buscador de imaganes usando NN (Nearest Neighbour)
+Proposito: Juego de carta utilizando pygame.
 
 """
 
@@ -146,7 +145,8 @@ Returns if card is Ace and the card itself.'''
     if card in cardA:
         cA = 1
     return card, cA
-#Modificar initgame para 
+#Modificar initgame para jugadores multijugar o importarlo en un cliente
+
 def initGame(cList, uList, dList):
     '''Generates two cards for dealer and user, one at a time for each.
 Returns if card is Ace and the total amount of the cards per person.'''
@@ -274,3 +274,9 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+"""
+
+
+"""
