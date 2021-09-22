@@ -12,6 +12,8 @@ import socket, pdb
 # Despues de eso, nos enfocamos en crear como un master room, donde podemos ver todos los chatrooms. Por lo menos tengamos esa meta.
 # Te parece?
 CLIENTS = 12
+PORT = 5555
+quitting = "QUIT"
 
 # Funcion que permite agregar nuevos jugadores.
 def create_socket(address):
@@ -59,14 +61,75 @@ class gameServer:
     def __init__(self) -> "newGame":
         #Se haran diccionarios para dar lista de sesiones y que jugadores hay en esas sesiones
         self.gamerooms = {}
-        self.gamerooms_platers = {}
-    #Pendiente
+        self.gamerooms_players = {}
+    #Saluda a nuevos jugadores en el servidor
     def greet_new_players_in_server(self, new_player):
-        return 0
+        new_player.socket.sendall("Welcome to the Game Server ! \n Please, write your name to share with us: \n")
+
     def list_rooms(self,player):
-        return 0
-    def clien_menu():
-        return 0
+        #muestra todos los gamerooms
+        if len(self.gamerooms) == 0:
+            message = "There's 0 game sessions right now... \n Create your own game room! \n Type [join room_name] to create a room. \n"
+            player.socket.sendall(message.encode())
+        else:
+            message = "Listing all current game sessions... \n"
+            for room in self.gamerooms:
+                message += room + ":  " + str(len(self.gamerooms[room].players)) + " player (s) \n "
+    
+
     def remove_player_in_server(self,player):
-        return 0
+        if player.name in self.gamerooms_players:
+            self.gamerooms[self.gamerooms_players[player.name]].remove_player(player)
+            del self.gamerooms_players[player.name]
+        print("Player: " + player.name + " has left \n")
+
+    def client_menu(self, player, command):
+        #Menu principal
+        print("---------------------------")
+        menu = """
+        |-----------------------------------|
+        Welcome to the Game Server ! \n
+        write [LIST] to have a list of all Game Rooms \n
+        write [JOIN gameRoom_name] to join/create/switch to another game room \n
+        write [MANUAL] to show again the commands \n
+        write [QUIT] to get out of the game server \n
+        |-----------------------------------|
+        \n
+        """
+
+        print(player.name + " says: " + command)
+        if "name:" in command:
+            name = command.split()[1]
+            player.name = name
+            print("New connection from: ", player.name)
+            player.socket.sendall(menu)
+        elif "JOIN" in command:
+            same_gameroom = False
+            if len(command.split()) >= 2:
+                room_name = command.split()[1]
+                if player.name in self.gamerooms_players:
+                    if self.gamerooms_players[player.name] == room_name:
+                        player.socket.sendall("You're a already in room: " + room_name.encode())
+                        same_gameroom = True
+                    else:
+                        old_gameroom = self.gamerooms_players[player.name]
+                        self.gamerooms[old_gameroom].remove_player_in_server(player)
+                if not same_gameroom:
+                    if not room_name in self.gamerooms: #new game room
+                        new_gameroom = roomGame(room_name)
+                        self.gamerooms[room_name] = new_gameroom
+                    self.gamerooms[room_name].players.append(player)
+                    self.gamerooms[room_name].greet_new_players_in_server(player)
+                    self.gamerooms_players[player.name] = room_name
+            else:
+                player.socket.sendall(menu)
+        elif "LIST" in command:
+            self.list_rooms(player)
+
+        elif "MANUAL" in command:
+            player.socket.sendall(menu)
+
+        elif "QUIT" in command:
+            player.socket.sendall(quitting.encode())
+            self.remove_player_in_server(player)
 
