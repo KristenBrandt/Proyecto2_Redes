@@ -6,7 +6,7 @@ utils.py
 Proposito: Funciones y clases para client y server
 """
 
-import socket, pdb
+import socket, pdb, random
 
 # Entonces mira, la idea es esta:   Tenemos que hacer conexion con los clientes en un chatroom.
 # Despues de eso, nos enfocamos en crear como un master room, donde podemos ver todos los chatrooms. Por lo menos tengamos esa meta.
@@ -47,15 +47,282 @@ class Player:
             self.status = "Online"
 
 #CLase de un room name
+class downTheRiver:
+    def ascii_version_of_card(drawnCards, return_string=True):
+        cards = []
+        for l in range(len(drawnCards)):
+            cards.append(drawnCards[l].copy())
+
+        suits_name = ['S', 'D', 'H', 'C']
+        suits_symbols = ['♠', '♦', '♥', '♣']
+
+        for i in range(len(cards)):
+            if int(cards[i][0]) == 11:
+                cards[i][0] = "J"
+
+            elif int(cards[i][0]) == 12:
+                cards[i][0] = "Q"
+
+            elif int(cards[i][0]) == 13:
+                cards[i][0] = "K"
+
+            elif int(cards[i][0]) == 1:
+                cards[i][0] = "A"
+
+
+
+        # create an empty list of list, each sublist is a line
+        lines = [[] for i in range(9)]
+
+        for i in range(len(cards)):
+            ten = False
+
+
+            rank = cards[i][0]
+            suit = suits_name.index(cards[i][1])
+            suit = suits_symbols[suit]
+
+            if cards[i][0] == "10":
+                ten = True
+                space = ""
+            else:
+                space = " "
+
+            lines[0].append('┌─────────┐')
+            if ten:
+                lines[1].append('│{}{}       │'.format(rank, space))  # use two {} one for char, one for space or char
+            else:
+                lines[1].append('│{}{}       │'.format(rank, space))  # use two {} one for char, one for space or char
+            lines[2].append('│         │')
+            lines[3].append('│         │')
+            lines[4].append('│    {}    │'.format(suit))
+            lines[5].append('│         │')
+            lines[6].append('│         │')
+            if ten:
+                lines[7].append('│       {}{}│'.format(rank, space))
+            else:
+                lines[7].append('│       {}{}│'.format(space, rank))
+            lines[8].append('└─────────┘')
+
+        result = []
+        for index, line in enumerate(lines):
+            result.append(''.join(lines[index]))
+
+        # hidden cards do not use string
+        if return_string:
+            return '\n'.join(result)
+        else:
+            return result
+
+
+    def pullCard(deck, drawn):
+        index = random.randint(0, len(deck)-1)
+        card = deck.pop(index)
+        drawn.append(card)
+
+    def checkFill(deck):
+        if len(deck)<1:
+            deck = [["1","S"], ["2","S"], ["3","S"], ["4","S"], ["5","S"], ["6","S"], ["7","S"], ["8","S"], ["9","S"], ["10","S"], ["11","S"], ["12","S"], ["13","S"],
+
+                ["1","H"], ["2","H"], ["3","H"], ["4","H"], ["5","H"], ["6","H"], ["7","H"], ["8","H"], ["9","H"], ["10","H"], ["11","H"], ["12","H"], ["13","H"],
+
+                ["1","C"], ["2","C"], ["3","C"], ["4","C"], ["5","C"], ["6","C"], ["7","C"], ["8","C"], ["9","C"], ["10","C"], ["11","C"], ["12","C"], ["13","C"],
+
+                ["1","D"], ["2","D"], ["3","D"], ["4","D"], ["5","D"], ["6","D"], ["7","D"], ["8","D"], ["9","D"], ["10","D"], ["11","D"], ["12","D"], ["13","D"]]
+            print("\nEl deck fue renovado...\n")
+
+    def redBlack(drawn, ans):
+        ind = len(drawn) - 1
+
+        if drawn[ind][1] == "D" or drawn[ind][1] == "H":
+            if ans == 'red':
+                return True
+        elif drawn[ind][1] == "S" or drawn[ind][1] == "C":
+            if ans == 'black':
+                return True
+        return False
+
+    def upDown(drawn, ans):
+        ind = len(drawn) - 1
+        if int(drawn[ind][0]) > int(drawn[ind-1][0]) and ans == "up":
+            return True
+        elif int(drawn[ind][0]) < int(drawn[ind-1][0]) and ans == "down":
+            return True
+        else:
+            return False
+
+    def inOut(drawn, ans):
+        ind = len(drawn) - 1
+        dr = int(drawn[ind][0])
+
+        dr1 = int(drawn[ind-1][0])
+
+        dr2 = int(drawn[ind-2][0])
+
+        mini = min(dr1, dr2)
+
+        maxi = max(dr1, dr2)
+
+        ran = range(mini, maxi+1)
+
+        if dr in ran and ans == "in":
+            return True
+        elif dr not in ran and ans == "out":
+            return True
+        else:
+            return False
+
+    def symb(drawn, ans):
+        ind = len(drawn) - 1
+        if drawn[ind][1] == ans:
+            return True
+        else:
+            return False
+
+    def mainmenu():
+        print(
+            '''
+            ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O
+
+
+            Elija el numero de jugadores:
+
+            1. Un jugador
+            2. Dos jugadores
+            3. Tres jugadores
+            4. Cuatro jugadores
+            0. Salir del juego (En cualquier pregunta se puede salir respondiendo 0)
+
+            ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O
+
+            '''
+        )
+
+    def choosepoints():
+        print(
+            '''
+            ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O
+
+            Elija cantidad de puntos para perder:
+
+            1. 15 puntos
+            2. 30 puntos
+            3. 45 puntos
+
+            ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O
+        ''')
+
+    def round1():
+
+        print(
+        '''
+        Rojo o negro?
+        1. Rojo
+        2. Negro
+
+        ''')
+
+    def round2():
+
+        print(
+        '''
+        Arriba o abajo?
+        1. Arriba
+        2. Abajo
+
+        ''')
+
+    def round3():
+
+        print(
+        '''
+        Adentro o afuera?
+        1. Adentro
+        2. Afuera
+
+        ''')
+
+    def round4():
+
+        print(
+        '''
+        Combo o pass?
+        1. Combo
+        2. Pass
+
+        ''')
+
+    def roundC():
+
+        print(
+        '''
+        Elije un simbolo:
+        1. Heart (H)
+        2. Spade (S)
+        3. Diamond (D)
+        4. Clover (C)
+
+        ''')
+    def defendIn(num):
+        correct = False
+        textinput = input()
+        while not correct:
+            try:
+                textinput = int(textinput)
+                if textinput < 0 or textinput > num:
+                    print("\nPor favor elija un numero valido...\n")
+                else:
+                    correct = True
+                    return textinput
+            except:
+                print("\nPor favor elija un numero valido...\n")
+            textinput = input("Ingrese un numero de 0-"+str(num)+": ")
+
+
+
 class roomGame:
     def __init__(self,name) -> 'NameRoom':
         #Cantidad de sockets/players que tendra un "chatroom"
         self.players = []
         self.name = name
+        self.dtr = downTheRiver()
+        self.point = 2
+        self.playersInSesion = {}
+        self.deck = [["1","S"], ["2","S"], ["3","S"], ["4","S"], ["5","S"], ["6","S"], ["7","S"], ["8","S"], ["9","S"], ["10","S"], ["11","S"], ["12","S"], ["13","S"],
+            ["1","H"], ["2","H"], ["3","H"], ["4","H"], ["5","H"], ["6","H"], ["7","H"], ["8","H"], ["9","H"], ["10","H"], ["11","H"], ["12","H"], ["13","H"],
+            ["1","C"], ["2","C"], ["3","C"], ["4","C"], ["5","C"], ["6","C"], ["7","C"], ["8","C"], ["9","C"], ["10","C"], ["11","C"], ["12","C"], ["13","C"],
+            ["1","D"], ["2","D"], ["3","D"], ["4","D"], ["5","D"], ["6","D"], ["7","D"], ["8","D"], ["9","D"], ["10","D"], ["11","D"], ["12","D"], ["13","D"]]
+        self.drawn = []
+        self.turn = 0
+        self.maxPoints = 20
 
     def greet_new_players(self, new_player):
         greeting = "Our game session " + self.name + "  welcomes the new player named " + new_player.name + " ! \n"
         greeting = bytes(greeting, "utf8")
+        welcome = b"""
+
+
+
+
+   _   _   _   _   _   _   _     _   _
+  / \ / \ / \ / \ / \ / \ / \   / \ / \
+ ( W ( e ( l ( c ( o ( m ( e ) ( t ( o )
+  \_/ \_/ \_/ \_/ \_/ \_/ \_/   \_/ \_/
+
+
+.------.------.------.------.     .------.------.------.     .------.------.------.------.------.
+|D.--. |O.--. |W.--. |N.--. |.-.  |T.--. |H.--. |E.--. |.-.  |R.--. |I.--. |V.--. |E.--. |R.--. |
+| :/\: | :/\: | :/\: | :(): ((5)) | :/\: | :/\: | (\/) ((5)) | :(): | (\/) | :(): | (\/) | :(): |
+| (__) | :\/: | :\/: | ()() |'-.-.| (__) | (__) | :\/: |'-.-.| ()() | :\/: | ()() | :\/: | ()() |
+| '--'D| '--'O| '--'W| '--'N| ((1)| '--'T| '--'H| '--'E| ((1)| '--'R| '--'I| '--'V| '--'E| '--'R|
+`------`------`------`------'  '-'`------`------`------'  '-'`------`------`------`------`------'
+
+
+
+
+
+    """
+        new_player.socket.sendall(welcome)
         for player in self.players:
             player.socket.sendall(greeting)
 
@@ -65,11 +332,18 @@ class roomGame:
         for player in self.players:
             player.socket.sendall(message)
 
+    def startGame(self):
+        for pl in self.players:
+            playersInSesion[pl.name] = 0
+        
+
+
     def remove_player(self, player):
         self.players.remove(player)
         leaving_message = player.name + " has left the game session. \n"
         leaving_message = bytes(leaving_message, "utf8")
         self.broadcast_messages(player,leaving_message)
+
 
 class gameServer:
     def __init__(self) -> "newGame":
