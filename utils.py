@@ -130,7 +130,8 @@ class downTheRiver:
 
                 ["1","D"], ["2","D"], ["3","D"], ["4","D"], ["5","D"], ["6","D"], ["7","D"], ["8","D"], ["9","D"], ["10","D"], ["11","D"], ["12","D"], ["13","D"]]
             print("\nEl deck fue renovado...\n")
-
+            return deck
+        return deck
     def redBlack(drawn, ans):
         ind = len(drawn) - 1
 
@@ -180,7 +181,7 @@ class downTheRiver:
             return False
 
     def mainmenu():
-        print(
+        menu =
             '''
             ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O
 
@@ -196,7 +197,7 @@ class downTheRiver:
             ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O
 
             '''
-        )
+        return menu
 
     def choosepoints():
         print(
@@ -213,48 +214,51 @@ class downTheRiver:
         ''')
 
     def round1():
-
-        print(
+        r1 =
         '''
         Rojo o negro?
         1. Rojo
         2. Negro
 
-        ''')
+        '''
+        return r1
 
     def round2():
 
-        print(
+        r2 =
         '''
         Arriba o abajo?
         1. Arriba
         2. Abajo
 
-        ''')
+        '''
+        return r2
 
     def round3():
 
-        print(
+        r3 =
         '''
         Adentro o afuera?
         1. Adentro
         2. Afuera
 
-        ''')
+        '''
+        return r3
 
     def round4():
 
-        print(
+        r4 =
         '''
         Combo o pass?
         1. Combo
         2. Pass
 
-        ''')
+        '''
+        return r4
 
     def roundC():
-
-        print(
+        # para cliente y/o ser
+        rC =
         '''
         Elije un simbolo:
         1. Heart (H)
@@ -262,8 +266,11 @@ class downTheRiver:
         3. Diamond (D)
         4. Clover (C)
 
-        ''')
+        '''
+        return rC
+
     def defendIn(num):
+        # Para cliente
         correct = False
         textinput = input()
         while not correct:
@@ -286,15 +293,16 @@ class roomGame:
         self.players = []
         self.name = name
         self.dtr = downTheRiver()
-        self.point = 2
+        self.points = 2
         self.playersInSesion = {}
         self.deck = [["1","S"], ["2","S"], ["3","S"], ["4","S"], ["5","S"], ["6","S"], ["7","S"], ["8","S"], ["9","S"], ["10","S"], ["11","S"], ["12","S"], ["13","S"],
             ["1","H"], ["2","H"], ["3","H"], ["4","H"], ["5","H"], ["6","H"], ["7","H"], ["8","H"], ["9","H"], ["10","H"], ["11","H"], ["12","H"], ["13","H"],
             ["1","C"], ["2","C"], ["3","C"], ["4","C"], ["5","C"], ["6","C"], ["7","C"], ["8","C"], ["9","C"], ["10","C"], ["11","C"], ["12","C"], ["13","C"],
             ["1","D"], ["2","D"], ["3","D"], ["4","D"], ["5","D"], ["6","D"], ["7","D"], ["8","D"], ["9","D"], ["10","D"], ["11","D"], ["12","D"], ["13","D"]]
         self.drawn = []
-        self.turn = 0
+        self.turn = False
         self.maxPoints = 20
+        self.dead = []
 
     def greet_new_players(self, new_player):
         greeting = "Our game session " + self.name + "  welcomes the new player named " + new_player.name + " ! \n"
@@ -332,11 +340,265 @@ class roomGame:
         for player in self.players:
             player.socket.sendall(message)
 
-    def startGame(self):
-        for pl in self.players:
-            playersInSesion[pl.name] = 0
-        
+    def broadcast_server_messages(self, message):
+        message = bytes(message)
+        for player in self.players:
+            player.socket.sendall(message)
 
+    def startGame(self):
+        self.playersInSesion = {}
+        for pl in self.players:
+            self.playersInSesion[pl.name] = 0
+        self.points = 2
+        self.deck = [["1","S"], ["2","S"], ["3","S"], ["4","S"], ["5","S"], ["6","S"], ["7","S"], ["8","S"], ["9","S"], ["10","S"], ["11","S"], ["12","S"], ["13","S"],
+            ["1","H"], ["2","H"], ["3","H"], ["4","H"], ["5","H"], ["6","H"], ["7","H"], ["8","H"], ["9","H"], ["10","H"], ["11","H"], ["12","H"], ["13","H"],
+            ["1","C"], ["2","C"], ["3","C"], ["4","C"], ["5","C"], ["6","C"], ["7","C"], ["8","C"], ["9","C"], ["10","C"], ["11","C"], ["12","C"], ["13","C"],
+            ["1","D"], ["2","D"], ["3","D"], ["4","D"], ["5","D"], ["6","D"], ["7","D"], ["8","D"], ["9","D"], ["10","D"], ["11","D"], ["12","D"], ["13","D"]]
+        self.turn = False
+        broadcast_server_messages(self, "!!!!!\n\nRecuerde que ♥ y ♦ son rojos \n\ty\nrecuerde que ♠ y ♣ son negros...\n\n\t\t\t!!!!!")
+        #print("!!!!!\n\nRecuerde que ♥ y ♦ son rojos \n\ty\nrecuerde que ♠ y ♣ son negros...\n\n\t\t\t!!!!!")
+        while(turn):
+
+            dead = []
+            if len(self.playersInSesion) == 1:
+                for key in self.playersInSesion:
+                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    print("Felicidades " + key + "\n\nHas ganado!\n\n")
+                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    self.turn = False
+                    break
+            for player in self.playersInSesion:
+                self.drawn = []
+                #Round 1 comienza
+                print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                print("Le toca a "+ player + "\n")
+                print("Con " + str(self.playersInSesion[player])+ " puntos.\n")
+                print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                self.dtr.round1()
+                ans = self.dtr.defendIn(2)
+                print("\nPulling Card...\n")
+                self.dtr.pullCard(self.deck, self.drawn)
+                self.deck = self.dtr.checkFill(self.deck)
+                print(self.dtr.ascii_version_of_card(self.drawn))
+                if ans == 1:
+                    if redBlack(self.drawn, "red"):
+                        print("Bien hecho!\nContinuando...\n")
+                        self.points = self.points + 2
+                    else:
+                        print("Perdiste "+ player +" :(")
+                        print("\nRecibes " + str(self.points) + " puntos...\n")
+                        self.playersInSesion[player] = self.playersInSesion[player] + self.points
+                        if self.playersInSesion[player] >= self.maxPoints:
+                            print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                            if len(self.playersInSesion) != 1:
+                                    self.dead.append(player)
+                        print('\nPasando a siguiente jugador\n')
+                        self.points = 2
+                        continue
+
+                elif ans == 2:
+                    if self.dtr.redBlack(self.drawn, "black"):
+                        print("Bien hecho!\nContinuando...\n")
+                        self.points = self.points + 2
+                    else:
+                        print("Perdiste "+ player +" :(")
+                        print("\nRecibes " + str(self.points) + " puntos...\n")
+                        self.playersInSesion[player] = self.playersInSesion[player] + self.points
+                        if self.playersInSesion[player] >= self.maxPoints:
+                            print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                            if len(self.playersInSesion) != 1:
+                                    self.dead.append(player)
+                        print('\nPasando a siguiente jugador\n')
+                        self.points = 2
+                        continue
+                elif ans == 0:
+                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    print("\nCerrando juego...\n")
+                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    self.turn = False
+                    break
+
+                #Round 2 comienza
+                self.dtr.round2()
+                ans = self.dtr.defendIn(2)
+                print("\nPulling Card...\n")
+                pullCard(self.deck, self.drawn)
+                self.deck = checkFill(self.deck)
+                print(self.dtr.ascii_version_of_card(self.drawn))
+
+                if ans == 1:
+                    if self.dtr.upDown(self.drawn, "up"):
+                        print("Bien hecho!\nContinuando...\n")
+                        self.points = self.points + 2
+                    else:
+                        print("Perdiste "+ player +" :(")
+                        print("\nRecibes " + str(self.points) + " puntos...\n")
+                        self.playersInSesion[player] = self.playersInSesion[player] + self.points
+                        if self.playersInSesion[player] >= self.maxPoints:
+                            print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                            if len(self.playersInSesion) != 1:
+                                    self.dead.append(player)
+                        print('\nPasando a siguiente jugador\n')
+                        self.points = 2
+                        continue
+                elif ans == 2:
+                    if self.dtr.upDown(self.drawn, "down"):
+                        print("Bien hecho!\nContinuando...\n")
+                        self.points = self.points + 2
+                    else:
+                        print("Perdiste "+ player +" :(")
+                        print("\nRecibes " + str(self.points) + " puntos...\n")
+                        self.playersInSesion[player] = self.playersInSesion[player] + self.points
+                        if self.playersInSesion[player] >= self.maxPoints:
+                            print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                            if len(self.playersInSesion) != 1:
+                                    self.dead.append(player)
+                        print('\nPasando a siguiente jugador\n')
+                        self.points = 2
+                        continue
+                elif ans == 0:
+                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    print("\nCerrando juego...\n")
+                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    self.turn = False
+                    break
+
+                 #Round 3 comienza
+                self.dtr.round3()
+                ans = self.dtr.defendIn(2)
+                print("\nPulling Card...\n")
+                self.dtr.pullCard(self.deck, self.drawn)
+                self.deck = self.dtr.checkFill(self.deck)
+                print(self.dtr.ascii_version_of_card(self.drawn))
+
+                if ans == 1:
+                    if self.dtr.inOut(self.drawn, "in"):
+                        print("Bien hecho!\nContinuando...\n")
+                        self.points = self.points + 1
+                    else:
+                        print("Perdiste "+ player +" :(")
+                        print("\nRecibes " + str(self.points) + " puntos...\n")
+                        self.playersInSesion[player] = self.playersInSesion[player] + self.points
+                        if self.playersInSesion[player] >= self.maxPoints:
+                            print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                            if len(self.playersInSesion) != 1:
+                                    self.dead.append(player)
+                        print('\nPasando a siguiente jugador\n')
+                        self.points = 2
+                        continue
+                elif ans == 2:
+                    if self.dtr.inOut(self.drawn, "out"):
+                        print("Bien hecho!\nContinuando...\n")
+                        self.points = self.points + 1
+                    else:
+                        print("Perdiste "+ player +" :(")
+                        print("\nRecibes " + str(self.points) + " puntos...\n")
+                        self.playersInSesion[player] = self.playersInSesion[player] + self.points
+                        if self.playersInSesion[player] >= self.maxPoints:
+                            print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                            if len(self.playersInSesion) != 1:
+                                    self.dead.append(player)
+                        print('\nPasando a siguiente jugador\n')
+                        self.points = 2
+                        continue
+                elif ans == 0:
+                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    print("\nCerrando juego...\n")
+                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    self.turn = False
+                    break
+
+                #Round 4 comienza
+                self.dtr.round4()
+                ans = self.dtr.defendIn(2)
+                if ans == 1:
+                    # Round C comienza
+                    self.dtr.roundC()
+                    ans = self.dtr.defendIn(4)
+
+                    print("\nPulling Card...\n")
+                    self.dtr.pullCard(self.deck, self.drawn)
+                    self.deck = self.dtr.checkFill(self.deck)
+                    print(self.dtr.ascii_version_of_card(self.drawn))
+
+                    if ans == 1:
+                        if self.dtr.symb(self.drawn, "H"):
+                            print("Bien hecho!\nContinuando...\n")
+                            self.points = self.points * 2
+                        else:
+                            print("Perdiste "+ player +" :(")
+                            print("\nRecibes " + str(self.points) + " puntos...\n")
+                            self.playersInSesion[player] = self.playersInSesion[player] + self.points
+                            if self.playersInSesion[player] >= self.maxPoints:
+                                print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                                if len(self.playersInSesion) != 1:
+                                        self.dead.append(player)
+                            print('\nPasando a siguiente jugador\n')
+                            self.points = 2
+                            continue
+                    elif ans == 2:
+                        if self.dtr.symb(self.drawn, "S"):
+                            print("Bien hecho!\nContinuando...\n")
+                            self.points = self.points * 2
+                        else:
+                            print("Perdiste "+ player +" :(")
+                            print("\nRecibes " + str(self.points) + " puntos...\n")
+                            self.playersInSesion[player] = self.playersInSesion[player] + self.points
+                            if self.playersInSesion[player] >= self.maxPoints:
+                                print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                                if len(self.playersInSesion) != 1:
+                                        self.dead.append(player)
+                            print('\nPasando a siguiente jugador\n')
+                            self.points = 2
+                            continue
+                    elif ans == 3:
+                        if self.dtr.symb(self.drawn, "D"):
+                            print("Bien hecho!\nContinuando...\n")
+                            self.points = self.points * 2
+                        else:
+                            print("Perdiste "+ player +" :(")
+                            print("\nRecibes " + str(self.points) + " puntos...\n")
+                            self.playersInSesion[player] = self.playersInSesion[player] + self.points
+                            if self.playersInSesion[player] >= self.maxPoints:
+                                print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                                if len(self.playersInSesion) != 1:
+                                        self.dead.append(player)
+                            print('\nPasando a siguiente jugador\n')
+                            self.points = 2
+                            continue
+                    elif ans == 4:
+                        if self.dtr.symb(self.drawn, "C"):
+                            print("Bien hecho!\nContinuando...\n")
+                            self.points = self.points * 2
+                        else:
+                            print("Perdiste "+ player +" :(")
+                            print("\nRecibes " + str(self.points) + " puntos...\n")
+                            self.playersInSesion[player] = self.playersInSesion[player] + self.points
+                            if self.playersInSesion[player] >= self.maxPoints:
+                                print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                                if len(self.playersInSesion) != 1:
+                                        self.dead.append(player)
+                            print('\nPasando a siguiente jugador\n')
+                            self.points = 2
+                            continue
+                    elif ans == 0:
+                        print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                        print("\nCerrando juego...\n")
+                        print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                        self.turn = False
+                        break
+                elif ans == 2:
+                    print('\nPasando a siguiente jugador\n')
+
+                elif ans == 0:
+                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    print("\nCerrando juego...\n")
+                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    self.turn = False
+                    break
+            if len(self.dead) > 0:
+                for i in range(len(self.dead)):
+                    self.playersInSesion.pop(self.dead[i])
 
     def remove_player(self, player):
         self.players.remove(player)
