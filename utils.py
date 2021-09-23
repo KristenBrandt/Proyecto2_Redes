@@ -49,6 +49,8 @@ class Player:
 #CLase de un room name
 class downTheRiver:
     def ascii_version_of_card(drawnCards, return_string=True):
+        # para cliente y/o server
+        # mas creo que para el Server
         cards = []
         for l in range(len(drawnCards)):
             cards.append(drawnCards[l].copy())
@@ -116,11 +118,13 @@ class downTheRiver:
 
 
     def pullCard(deck, drawn):
+        # server
         index = random.randint(0, len(deck)-1)
         card = deck.pop(index)
         drawn.append(card)
 
     def checkFill(deck):
+        # server
         if len(deck)<1:
             deck = [["1","S"], ["2","S"], ["3","S"], ["4","S"], ["5","S"], ["6","S"], ["7","S"], ["8","S"], ["9","S"], ["10","S"], ["11","S"], ["12","S"], ["13","S"],
 
@@ -133,6 +137,7 @@ class downTheRiver:
             return deck
         return deck
     def redBlack(drawn, ans):
+        # server
         ind = len(drawn) - 1
 
         if drawn[ind][1] == "D" or drawn[ind][1] == "H":
@@ -144,6 +149,7 @@ class downTheRiver:
         return False
 
     def upDown(drawn, ans):
+        # server
         ind = len(drawn) - 1
         if int(drawn[ind][0]) > int(drawn[ind-1][0]) and ans == "up":
             return True
@@ -153,6 +159,7 @@ class downTheRiver:
             return False
 
     def inOut(drawn, ans):
+        # server
         ind = len(drawn) - 1
         dr = int(drawn[ind][0])
 
@@ -174,6 +181,7 @@ class downTheRiver:
             return False
 
     def symb(drawn, ans):
+        # server
         ind = len(drawn) - 1
         if drawn[ind][1] == ans:
             return True
@@ -214,6 +222,7 @@ class downTheRiver:
         ''')
 
     def round1():
+        # para cliente y/o server
         r1 =
         '''
         Rojo o negro?
@@ -224,7 +233,7 @@ class downTheRiver:
         return r1
 
     def round2():
-
+        # para cliente y/o server
         r2 =
         '''
         Arriba o abajo?
@@ -235,7 +244,7 @@ class downTheRiver:
         return r2
 
     def round3():
-
+        # para cliente y/o server
         r3 =
         '''
         Adentro o afuera?
@@ -246,7 +255,7 @@ class downTheRiver:
         return r3
 
     def round4():
-
+        # para cliente y/o server
         r4 =
         '''
         Combo o pass?
@@ -257,7 +266,7 @@ class downTheRiver:
         return r4
 
     def roundC():
-        # para cliente y/o ser
+        # para cliente y/o server
         rC =
         '''
         Elije un simbolo:
@@ -347,6 +356,7 @@ class roomGame:
 
     def startGame(self):
         self.playersInSesion = {}
+        temp = ""
         for pl in self.players:
             self.playersInSesion[pl.name] = 0
         self.points = 2
@@ -362,14 +372,23 @@ class roomGame:
             dead = []
             if len(self.playersInSesion) == 1:
                 for key in self.playersInSesion:
-                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
-                    print("Felicidades " + key + "\n\nHas ganado!\n\n")
-                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    broadcast_server_messages(self,"~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O " )
+                    temp = "Felicidades " + key + "\n\nHas ganado!\n\n"
+                    broadcast_server_messages(self, temp )
+                    broadcast_server_messages(self,"~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O " )
+                    #print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    #print("Felicidades " + key + "\n\nHas ganado!\n\n")
+                    #print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
                     self.turn = False
                     break
             for player in self.playersInSesion:
                 self.drawn = []
                 #Round 1 comienza
+                broadcast_server_messages(self, )
+                broadcast_server_messages(self, )
+                broadcast_server_messages(self, )
+                broadcast_server_messages(self, )
+
                 print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
                 print("Le toca a "+ player + "\n")
                 print("Con " + str(self.playersInSesion[player])+ " puntos.\n")
