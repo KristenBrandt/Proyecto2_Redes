@@ -467,10 +467,11 @@ class roomGame:
                 #Round 2 comienza
                 self.dtr.round2()
                 ans = self.dtr.defendIn(2)
-                print("\nPulling Card...\n")
-                pullCard(self.deck, self.drawn)
-                self.deck = checkFill(self.deck)
-                print(self.dtr.ascii_version_of_card(self.drawn))
+                broadcast_server_messages(self, "\n Pulling Card... \n")
+                self.dtr.pullCard(self.deck, self.drawn)
+                self.deck = self.dtr.checkFill(self.deck)
+                temp = self.dtr.ascii_version_of_card(self.drawn)
+                broadcast_server_messages(self, temp)
 
                 if ans == 1:
                     if self.dtr.upDown(self.drawn, "up"):
@@ -535,7 +536,8 @@ class roomGame:
                 broadcast_server_messages(self, "\n Pulling Card... \n")
                 self.dtr.pullCard(self.deck, self.drawn)
                 self.deck = self.dtr.checkFill(self.deck)
-                print(self.dtr.ascii_version_of_card(self.drawn))
+                temp = self.dtr.ascii_version_of_card(self.drawn)
+                broadcast_server_messages(self, temp)
 
                 if ans == 1:
                     if self.dtr.inOut(self.drawn, "in"):
@@ -605,7 +607,8 @@ class roomGame:
                     broadcast_server_messages(self, "\n Pulling Card... \n")
                     self.dtr.pullCard(self.deck, self.drawn)
                     self.deck = self.dtr.checkFill(self.deck)
-                    print(self.dtr.ascii_version_of_card(self.drawn))
+                    temp = self.dtr.ascii_version_of_card(self.drawn)
+                    broadcast_server_messages(self, temp)
 
                     if ans == 1:
                         if self.dtr.symb(self.drawn, "H"):
@@ -832,6 +835,29 @@ class gameServer:
             mensaje_toggle = "\nEl jugador " +player.name+ " cambio su status a "+ player.status+ ".\n "
             mensaje_toggle = bytes(mensaje_toggle, "utf8")
             player.socket.sendall(mensaje_toggle)
+
+        elif "START" in command:
+            length_player = 0
+            same_gameroom = False
+            if len(self.gamerooms_players < 1 ):
+                broadcast_server_messages(self, "Mire imbecil no puede jugar solo \n")
+            else:
+                if not same_gameroom:
+                    broadcast_server_messages(self, "mensaje")
+                    #
+                if player.name in self.gamerooms_players:
+                    if self.gamerooms_players[player.name] == room_name and s
+
+
+
+            self.gamerooms[room_name].players
+            for i in len(self.gamerooms.players):
+                print("I" + str(i))
+                print("GAMEROOMPLAYERS " + str(self.gamerooms.players))
+                if player.name in self.gamerooms.players:
+                    if self.gamerooms.players[player.name] == room_name:
+                        pass
+
 
 
         elif "QUIT" in  command:
