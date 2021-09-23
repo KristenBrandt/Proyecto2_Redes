@@ -27,11 +27,12 @@ def create_socket(address):
 
 #Clase de un nuevo jugador
 class Player:
-    def __init__(self, socket, name) -> "newPlayer":
+    def __init__(self, socket,name = "NEW") -> "newPlayer":
         socket.setblocking(0)
         self.socket = socket
+        #name = input("Ingrese el nombre para su jugador: ")
         self.name = name
-    
+
     def fileno(self):
         #Identificador de socket
         return self.socket.fileno()
@@ -43,10 +44,11 @@ class roomGame:
         self.name = name
 
     def greet_new_players(self, new_player):
-        greeting = "Our game session" + self.name + "welcomes the new player named " + new_player.name + " ! \n"
+        greeting = "Our game session " + self.name + "  welcomes the new player named " + new_player.name + " ! \n"
+        greeting = bytes(greeting, "utf8")
         for player in self.players:
-            player.socket.sendall(greeting.encode())
-    
+            player.socket.sendall(greeting)
+
     def broadcast_messages(self, player, message):
         message = player.name.encode() + "Message to all: " + message + " \n"
         for player in self.players:
@@ -54,7 +56,8 @@ class roomGame:
 
     def remove_player(self, player):
         self.players.remove(player)
-        leaving_message = player.name.encode() + "has left the game session. \n"
+        leaving_message = player.name + "has left the game session. \n"
+        leaving_message = bytes(leaving_message, "utf8")
         self.broadcast_messages(player,leaving_message)
 
 class gameServer:
@@ -64,18 +67,21 @@ class gameServer:
         self.gamerooms_players = {}
     #Saluda a nuevos jugadores en el servidor
     def greet_new_players_in_server(self, new_player):
-        new_player.socket.sendall("Welcome to the Game Server ! \n Please, write your name to share with us: \n")
+        new_player.socket.sendall(b"Welcome to the Game Server ! \n Please, write your name to share with us: \n")
 
     def list_rooms(self,player):
+        print("ENTRO ESTA SHIT")
+        print(len(self.gamerooms))
         #muestra todos los gamerooms
         if len(self.gamerooms) == 0:
-            message = "There's 0 game sessions right now... \n Create your own game room! \n Type [join room_name] to create a room. \n"
-            player.socket.sendall(message.encode())
+            message = b"There's 0 game sessions right now... \n Create your own game room! \n Type [join room_name] to create a room. \n"
+            player.socket.sendall(message)
         else:
             message = "Listing all current game sessions... \n"
             for room in self.gamerooms:
                 message += room + ":  " + str(len(self.gamerooms[room].players)) + " player (s) \n "
-    
+
+
 
     def remove_player_in_server(self,player):
         if player.name in self.gamerooms_players:
@@ -85,8 +91,8 @@ class gameServer:
 
     def client_menu(self, player, command):
         #Menu principal
-        print("---------------------------")
-        menu = """
+
+        menu = b"""
         |-----------------------------------|
         Welcome to the Game Server ! \n
         write [LIST] to have a list of all Game Rooms \n
@@ -96,17 +102,18 @@ class gameServer:
         |-----------------------------------|
         \n
         """
+        nose = player.name + " says: " + command
+        print("\n")
+        print("NOSE == " + nose)
+        if player.name in nose:
 
-        print(player.name + " says: " + command)
-        if "name:" in command:
-            name = command.split()[1]
-            player.name = name
+            print("\nName " + player.name + " \n")
             print("New connection from: ", player.name)
             player.socket.sendall(menu)
-        elif "JOIN" in command:
+        elif "JOIN" in nose:
             same_gameroom = False
-            if len(command.split()) >= 2:
-                room_name = command.split()[1]
+            if len(nose.split()) >= 2:
+                room_name = nose.split()[1]
                 if player.name in self.gamerooms_players:
                     if self.gamerooms_players[player.name] == room_name:
                         player.socket.sendall("You're a already in room: " + room_name.encode())
@@ -119,17 +126,16 @@ class gameServer:
                         new_gameroom = roomGame(room_name)
                         self.gamerooms[room_name] = new_gameroom
                     self.gamerooms[room_name].players.append(player)
-                    self.gamerooms[room_name].greet_new_players_in_server(player)
+                    self.gamerooms[room_name].greet_new_players(player)
                     self.gamerooms_players[player.name] = room_name
             else:
                 player.socket.sendall(menu)
-        elif "LIST" in command:
+        elif "LIST" in nose:
             self.list_rooms(player)
 
-        elif "MANUAL" in command:
+        elif "MANUAL" in nose:
             player.socket.sendall(menu)
 
-        elif "QUIT" in command:
+        elif "QUIT" in nose:
             player.socket.sendall(quitting.encode())
             self.remove_player_in_server(player)
-

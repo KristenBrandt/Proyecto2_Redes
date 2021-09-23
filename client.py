@@ -16,7 +16,7 @@ from utils import *
 import utils
 
 READ_BUFFER = 8192
-
+#print(sys.argv[2])
 #host name is 5555
 if len(sys.argv) < 2:
     print("Usage: Python3 client.py [hostname]", file = sys.stderr)
@@ -37,7 +37,7 @@ socket_list = [sys.stdin, server_connection]
 while True:
     read_sockets, write_sockets, error_sockets = select.select(socket_list, [], [])
     for s in read_sockets:
-        if s is server_connection: # incoming message 
+        if s is server_connection: # incoming message
             message = s.recv(READ_BUFFER)
             if not message:
                 print("Server down!")
