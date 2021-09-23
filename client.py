@@ -16,15 +16,17 @@ from utils import *
 import utils
 
 READ_BUFFER = 8192
-#print(sys.argv[2])
+
 #host name is 5555
 if len(sys.argv) < 2:
     print("Usage: Python3 client.py [hostname]", file = sys.stderr)
     sys.exit(1)
 else:
+
     server_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_connection.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_connection.connect((sys.argv[1], utils.PORT))
+
 
 def prompt():
     print('-->', end=' ', flush = True)

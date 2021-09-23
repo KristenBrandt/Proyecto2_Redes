@@ -14,6 +14,7 @@ READ_BUFFER = 8192
 
 host = sys.argv[1] if len(sys.argv) >= 2 else ""
 
+
 listen_socket = utils.create_socket((host, utils.PORT))
 
 gameServer = gameServer()
@@ -26,7 +27,7 @@ while True:
     for player in read_players:
         if player is listen_socket: #nueva conexion, y se crea un socket
             new_socket,add = player.accept()
-            new_player = Player(new_socket)
+            new_player = Player(new_socket, add[1])
             connection_list.append(new_player)
             gameServer.greet_new_players_in_server(new_player)
 
@@ -35,7 +36,11 @@ while True:
             if message:
                 message = message.decode().upper()
                 print(message)
+                if "NAME" in message:
+                    nnn = message.split()[1]
+                    player.setName(nnn)
                 gameServer.client_menu(player, message)
+
             else:
                 player.socket.close()
                 connection_list.remove(player)
