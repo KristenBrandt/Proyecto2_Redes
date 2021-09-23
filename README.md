@@ -8,10 +8,10 @@ The game Down the River is a "drinking game" that we decided to adapt for use in
 The game consists in that the players have to go guessing about different characteristics of the cards and if they are answered correctly, points are assigned to the table. If the player answers incorrectly, he takes the points from the table. The first player to reach a certain number of points is the loser. 
 
 This game has 4 different rounds of riddles:
-- 1. Is the card red or black?
-- 2. The card has a higher or lower value than the first card
-- 3. The card is within the range of the first two cards or outside
-- 4. Round multiplier. Guess the card symbol (The player can decide if they want to try this round or go to the next player)
+1. Is the card red or black?
+2. The card has a higher or lower value than the first card
+3. The card is within the range of the first two cards or outside
+4. Round multiplier. Guess the card symbol (The player can decide if they want to try this round or go to the next player)
 
 ### What we learned
 - How to implement a card game of our choosing

@@ -384,17 +384,23 @@ class roomGame:
             for player in self.playersInSesion:
                 self.drawn = []
                 #Round 1 comienza
+                temp =
                 broadcast_server_messages(self, )
                 broadcast_server_messages(self, )
                 broadcast_server_messages(self, )
                 broadcast_server_messages(self, )
 
-                print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
-                print("Le toca a "+ player + "\n")
-                print("Con " + str(self.playersInSesion[player])+ " puntos.\n")
-                print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                broadcast_server_messages(self,"~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O " )
+                temp = ("Le toca a " + player + "\n" + "Con " + str(self.playersInSesion[player]) + " puntos . \n")
+                broadcast_server_messages(self, temp)
+                broadcast_server_messages(self,"~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O " )
+
+                #print("Le toca a "+ player + "\n")
+                #print("Con " + str(self.playersInSesion[player])+ " puntos.\n")
+                #print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
                 self.dtr.round1()
                 ans = self.dtr.defendIn(2)
+                broadcast_server_messages(self, "\n Pulling Card... \n")
                 print("\nPulling Card...\n")
                 self.dtr.pullCard(self.deck, self.drawn)
                 self.deck = self.dtr.checkFill(self.deck)
