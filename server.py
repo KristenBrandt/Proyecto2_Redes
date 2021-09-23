@@ -8,7 +8,7 @@ Proposito: Juego de carta utilizando pygame.
 """
 #ip KRISTEN 192.168.1.6
 #TODO
-import select, socket, sys
+import select, socket, sys, threading
 from utils import *
 import utils
 READ_BUFFER = 8192

@@ -45,7 +45,7 @@ while True:
                 print("Server down!")
                 sys.exit(2)
             else:
-                if message == utils.quitting.encode():
+                if message == utils.quitting:
                     sys.stdout.write('Bye\n')
                     sys.exit(2)
                 else:
