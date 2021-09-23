@@ -401,12 +401,15 @@ class roomGame:
                 self.dtr.round1()
                 ans = self.dtr.defendIn(2)
                 broadcast_server_messages(self, "\n Pulling Card... \n")
-                print("\nPulling Card...\n")
+                #print("\nPulling Card...\n")
                 self.dtr.pullCard(self.deck, self.drawn)
                 self.deck = self.dtr.checkFill(self.deck)
-                print(self.dtr.ascii_version_of_card(self.drawn))
+                temp = self.drt.ascii_version_of_card(self.drawn)
+                broadcast_server_messages(self, temp)
+                #print(self.dtr.ascii_version_of_card(self.drawn))
                 if ans == 1:
                     if redBlack(self.drawn, "red"):
+                        broadcast_server_messages(self, "Bien hecho!\nContinuando...\n" )
                         print("Bien hecho!\nContinuando...\n")
                         self.points = self.points + 2
                     else:

@@ -29,6 +29,11 @@ This game has 4 different rounds of riddles:
 
 
 ### To do List
-- [ ] Modify the BlackJack game with River Card Game (Check comments )
-- [ ] Create the Server side 
-- [ ] Create the Client side
+- [X] Modify the BlackJack game with River Card Game (Check comments )
+- [X] Create the Server
+- [X] Create the Client 
+- [X] Create game
+- [X] Allow rooms to be made
+- [X] Allow change status
+- [X] Allow change name
+- [ ] Implement game on client and server
