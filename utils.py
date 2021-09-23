@@ -12,7 +12,7 @@ import socket, pdb, random
 # Despues de eso, nos enfocamos en crear como un master room, donde podemos ver todos los chatrooms. Por lo menos tengamos esa meta.
 # Te parece?
 CLIENTS = 12
-PORT = 5555
+PORT = 8080
 quitting = "QUIT"
 
 # Funcion que permite agregar nuevos jugadores.
@@ -189,8 +189,7 @@ class downTheRiver:
             return False
 
     def mainmenu():
-        menu =
-            '''
+        menu ='''
             ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O
 
 
@@ -223,8 +222,7 @@ class downTheRiver:
 
     def round1():
         # para cliente y/o server
-        r1 =
-        '''
+        r1 ='''
         Rojo o negro?
         1. Rojo
         2. Negro
@@ -234,8 +232,7 @@ class downTheRiver:
 
     def round2():
         # para cliente y/o server
-        r2 =
-        '''
+        r2 ='''
         Arriba o abajo?
         1. Arriba
         2. Abajo
@@ -245,8 +242,7 @@ class downTheRiver:
 
     def round3():
         # para cliente y/o server
-        r3 =
-        '''
+        r3 ='''
         Adentro o afuera?
         1. Adentro
         2. Afuera
@@ -256,8 +252,7 @@ class downTheRiver:
 
     def round4():
         # para cliente y/o server
-        r4 =
-        '''
+        r4 ='''
         Combo o pass?
         1. Combo
         2. Pass
@@ -267,8 +262,7 @@ class downTheRiver:
 
     def roundC():
         # para cliente y/o server
-        rC =
-        '''
+        rC ='''
         Elije un simbolo:
         1. Heart (H)
         2. Spade (S)
@@ -286,12 +280,14 @@ class downTheRiver:
             try:
                 textinput = int(textinput)
                 if textinput < 0 or textinput > num:
-                    print("\nPor favor elija un numero valido...\n")
+                    inv_mes = b"\nPor favor elija un numero valido...\n"
+                    palyer.socket.sendall(inv_mes)
                 else:
                     correct = True
                     return textinput
             except:
-                print("\nPor favor elija un numero valido...\n")
+                inv_mes = b"\nPor favor elija un numero valido...\n"
+                palyer.socket.sendall(inv_mes)
             textinput = input("Ingrese un numero de 0-"+str(num)+": ")
 
 
@@ -384,11 +380,11 @@ class roomGame:
             for player in self.playersInSesion:
                 self.drawn = []
                 #Round 1 comienza
-                temp =
-                broadcast_server_messages(self, )
-                broadcast_server_messages(self, )
-                broadcast_server_messages(self, )
-                broadcast_server_messages(self, )
+                # temp =
+                # broadcast_server_messages(self, )
+                # broadcast_server_messages(self, )
+                # broadcast_server_messages(self, )
+                # broadcast_server_messages(self, )
 
                 broadcast_server_messages(self,"~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O " )
                 temp = ("Le toca a " + player + "\n" + "Con " + str(self.playersInSesion[player]) + " puntos . \n")
@@ -406,43 +402,65 @@ class roomGame:
                 self.deck = self.dtr.checkFill(self.deck)
                 temp = self.drt.ascii_version_of_card(self.drawn)
                 broadcast_server_messages(self, temp)
+
                 #print(self.dtr.ascii_version_of_card(self.drawn))
                 if ans == 1:
                     if redBlack(self.drawn, "red"):
                         broadcast_server_messages(self, "Bien hecho!\nContinuando...\n" )
-                        print("Bien hecho!\nContinuando...\n")
+                        #print("Bien hecho!\nContinuando...\n")
                         self.points = self.points + 2
                     else:
-                        print("Perdiste "+ player +" :(")
-                        print("\nRecibes " + str(self.points) + " puntos...\n")
+                        temp = "Perdiste " + player + " :("
+                        broadcast_server_messages(self, temp)
+                        temp = "\n Recibes " +str(self.points) + " puntos... \n"
+                        broadcast_server_messages(self, temp)
+
+                        #print("Perdiste "+ player +" :(")
+                        #print("\nRecibes " + str(self.points) + " puntos...\n")
                         self.playersInSesion[player] = self.playersInSesion[player] + self.points
                         if self.playersInSesion[player] >= self.maxPoints:
-                            print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                            temp = "Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!"
+                            broadcast_server_messages(self, temp)
+                            # print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
                             if len(self.playersInSesion) != 1:
                                     self.dead.append(player)
-                        print('\nPasando a siguiente jugador\n')
+                        temp = '\nPasando a siguiente jugador\n'
+                        broadcast_server_messages(self, temp)
+                        # print('\nPasando a siguiente jugador\n')
                         self.points = 2
                         continue
 
                 elif ans == 2:
                     if self.dtr.redBlack(self.drawn, "black"):
-                        print("Bien hecho!\nContinuando...\n")
+                        # print("Bien hecho!\nContinuando...\n")
+                        broadcast_server_messages(self, "Bien hecho!\nContinuando...\n" )
                         self.points = self.points + 2
                     else:
-                        print("Perdiste "+ player +" :(")
-                        print("\nRecibes " + str(self.points) + " puntos...\n")
+                        temp = "Perdiste " + player + " :("
+                        broadcast_server_messages(self, temp)
+                        temp = "\n Recibes " +str(self.points) + " puntos... \n"
+                        broadcast_server_messages(self, temp)
+
+                        #print("Perdiste "+ player +" :(")
+                        #print("\nRecibes " + str(self.points) + " puntos...\n")
                         self.playersInSesion[player] = self.playersInSesion[player] + self.points
                         if self.playersInSesion[player] >= self.maxPoints:
-                            print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                            temp = "Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!"
+                            broadcast_server_messages(self, temp)
+                            # print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
                             if len(self.playersInSesion) != 1:
                                     self.dead.append(player)
-                        print('\nPasando a siguiente jugador\n')
+                        temp = '\nPasando a siguiente jugador\n'
+                        broadcast_server_messages(self, temp)
+                        # print('\nPasando a siguiente jugador\n')
                         self.points = 2
                         continue
                 elif ans == 0:
-                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
-                    print("\nCerrando juego...\n")
-                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    # print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    # print("\nCerrando juego...\n")
+                    # print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    temp = "~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O \nCerrando juego...\n~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O "
+                    broadcast_server_messages(self, temp)
                     self.turn = False
                     break
 
@@ -456,83 +474,122 @@ class roomGame:
 
                 if ans == 1:
                     if self.dtr.upDown(self.drawn, "up"):
-                        print("Bien hecho!\nContinuando...\n")
+                        # print("Bien hecho!\nContinuando...\n")
+                        broadcast_server_messages(self, "Bien hecho!\nContinuando...\n" )
                         self.points = self.points + 2
                     else:
-                        print("Perdiste "+ player +" :(")
-                        print("\nRecibes " + str(self.points) + " puntos...\n")
+                        temp = "Perdiste " + player + " :("
+                        broadcast_server_messages(self, temp)
+                        temp = "\n Recibes " +str(self.points) + " puntos... \n"
+                        broadcast_server_messages(self, temp)
+
+                        #print("Perdiste "+ player +" :(")
+                        #print("\nRecibes " + str(self.points) + " puntos...\n")
                         self.playersInSesion[player] = self.playersInSesion[player] + self.points
                         if self.playersInSesion[player] >= self.maxPoints:
-                            print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                            temp = "Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!"
+                            broadcast_server_messages(self, temp)
+                            # print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
                             if len(self.playersInSesion) != 1:
                                     self.dead.append(player)
-                        print('\nPasando a siguiente jugador\n')
+                        temp = '\nPasando a siguiente jugador\n'
+                        broadcast_server_messages(self, temp)
+                        # print('\nPasando a siguiente jugador\n')
                         self.points = 2
                         continue
                 elif ans == 2:
                     if self.dtr.upDown(self.drawn, "down"):
-                        print("Bien hecho!\nContinuando...\n")
+                        # print("Bien hecho!\nContinuando...\n")
+                        broadcast_server_messages(self, "Bien hecho!\nContinuando...\n" )
                         self.points = self.points + 2
                     else:
-                        print("Perdiste "+ player +" :(")
-                        print("\nRecibes " + str(self.points) + " puntos...\n")
+                        temp = "Perdiste " + player + " :("
+                        broadcast_server_messages(self, temp)
+                        temp = "\n Recibes " +str(self.points) + " puntos... \n"
+                        broadcast_server_messages(self, temp)
+
+                        #print("Perdiste "+ player +" :(")
+                        #print("\nRecibes " + str(self.points) + " puntos...\n")
                         self.playersInSesion[player] = self.playersInSesion[player] + self.points
                         if self.playersInSesion[player] >= self.maxPoints:
-                            print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                            temp = "Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!"
+                            broadcast_server_messages(self, temp)
+                            # print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
                             if len(self.playersInSesion) != 1:
                                     self.dead.append(player)
-                        print('\nPasando a siguiente jugador\n')
+                        temp = '\nPasando a siguiente jugador\n'
+                        broadcast_server_messages(self, temp)
+                        # print('\nPasando a siguiente jugador\n')
                         self.points = 2
                         continue
                 elif ans == 0:
-                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
-                    print("\nCerrando juego...\n")
-                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    temp = "~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O \nCerrando juego...\n~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O "
+                    broadcast_server_messages(self, temp)
                     self.turn = False
                     break
 
                  #Round 3 comienza
                 self.dtr.round3()
                 ans = self.dtr.defendIn(2)
-                print("\nPulling Card...\n")
+                # print("\nPulling Card...\n")
+                broadcast_server_messages(self, "\n Pulling Card... \n")
                 self.dtr.pullCard(self.deck, self.drawn)
                 self.deck = self.dtr.checkFill(self.deck)
                 print(self.dtr.ascii_version_of_card(self.drawn))
 
                 if ans == 1:
                     if self.dtr.inOut(self.drawn, "in"):
-                        print("Bien hecho!\nContinuando...\n")
+                        # print("Bien hecho!\nContinuando...\n")
+                        broadcast_server_messages(self, "Bien hecho!\nContinuando...\n" )
                         self.points = self.points + 1
                     else:
-                        print("Perdiste "+ player +" :(")
-                        print("\nRecibes " + str(self.points) + " puntos...\n")
+                        temp = "Perdiste " + player + " :("
+                        broadcast_server_messages(self, temp)
+                        temp = "\n Recibes " +str(self.points) + " puntos... \n"
+                        broadcast_server_messages(self, temp)
+
+                        #print("Perdiste "+ player +" :(")
+                        #print("\nRecibes " + str(self.points) + " puntos...\n")
                         self.playersInSesion[player] = self.playersInSesion[player] + self.points
                         if self.playersInSesion[player] >= self.maxPoints:
-                            print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                            temp = "Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!"
+                            broadcast_server_messages(self, temp)
+                            # print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
                             if len(self.playersInSesion) != 1:
                                     self.dead.append(player)
-                        print('\nPasando a siguiente jugador\n')
+                        temp = '\nPasando a siguiente jugador\n'
+                        broadcast_server_messages(self, temp)
+                        # print('\nPasando a siguiente jugador\n')
                         self.points = 2
                         continue
                 elif ans == 2:
                     if self.dtr.inOut(self.drawn, "out"):
-                        print("Bien hecho!\nContinuando...\n")
+                        # print("Bien hecho!\nContinuando...\n")
+                        broadcast_server_messages(self, "Bien hecho!\nContinuando...\n" )
                         self.points = self.points + 1
                     else:
-                        print("Perdiste "+ player +" :(")
-                        print("\nRecibes " + str(self.points) + " puntos...\n")
+                        temp = "Perdiste " + player + " :("
+                        broadcast_server_messages(self, temp)
+                        temp = "\n Recibes " +str(self.points) + " puntos... \n"
+                        broadcast_server_messages(self, temp)
+
+                        #print("Perdiste "+ player +" :(")
+                        #print("\nRecibes " + str(self.points) + " puntos...\n")
                         self.playersInSesion[player] = self.playersInSesion[player] + self.points
                         if self.playersInSesion[player] >= self.maxPoints:
-                            print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                            temp = "Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!"
+                            broadcast_server_messages(self, temp)
+                            # print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
                             if len(self.playersInSesion) != 1:
                                     self.dead.append(player)
-                        print('\nPasando a siguiente jugador\n')
+                        temp = '\nPasando a siguiente jugador\n'
+                        broadcast_server_messages(self, temp)
+                        # print('\nPasando a siguiente jugador\n')
                         self.points = 2
                         continue
                 elif ans == 0:
-                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
-                    print("\nCerrando juego...\n")
-                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    temp = "~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O \nCerrando juego...\n~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O "
+                    broadcast_server_messages(self, temp)
                     self.turn = False
                     break
 
@@ -544,84 +601,123 @@ class roomGame:
                     self.dtr.roundC()
                     ans = self.dtr.defendIn(4)
 
-                    print("\nPulling Card...\n")
+                    # print("\nPulling Card...\n")
+                    broadcast_server_messages(self, "\n Pulling Card... \n")
                     self.dtr.pullCard(self.deck, self.drawn)
                     self.deck = self.dtr.checkFill(self.deck)
                     print(self.dtr.ascii_version_of_card(self.drawn))
 
                     if ans == 1:
                         if self.dtr.symb(self.drawn, "H"):
-                            print("Bien hecho!\nContinuando...\n")
+                            # print("Bien hecho!\nContinuando...\n")
+                            broadcast_server_messages(self, "Bien hecho!\nContinuando...\n" )
                             self.points = self.points * 2
                         else:
-                            print("Perdiste "+ player +" :(")
-                            print("\nRecibes " + str(self.points) + " puntos...\n")
+                            temp = "Perdiste " + player + " :("
+                            broadcast_server_messages(self, temp)
+                            temp = "\n Recibes " +str(self.points) + " puntos... \n"
+                            broadcast_server_messages(self, temp)
+
+                            #print("Perdiste "+ player +" :(")
+                            #print("\nRecibes " + str(self.points) + " puntos...\n")
                             self.playersInSesion[player] = self.playersInSesion[player] + self.points
                             if self.playersInSesion[player] >= self.maxPoints:
-                                print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                                temp = "Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!"
+                                broadcast_server_messages(self, temp)
+                                # print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
                                 if len(self.playersInSesion) != 1:
                                         self.dead.append(player)
-                            print('\nPasando a siguiente jugador\n')
+                            temp = '\nPasando a siguiente jugador\n'
+                            broadcast_server_messages(self, temp)
+                            # print('\nPasando a siguiente jugador\n')
                             self.points = 2
                             continue
                     elif ans == 2:
                         if self.dtr.symb(self.drawn, "S"):
-                            print("Bien hecho!\nContinuando...\n")
+                            # print("Bien hecho!\nContinuando...\n")
+                            broadcast_server_messages(self, "Bien hecho!\nContinuando...\n" )
                             self.points = self.points * 2
                         else:
-                            print("Perdiste "+ player +" :(")
-                            print("\nRecibes " + str(self.points) + " puntos...\n")
+                            temp = "Perdiste " + player + " :("
+                            broadcast_server_messages(self, temp)
+                            temp = "\n Recibes " +str(self.points) + " puntos... \n"
+                            broadcast_server_messages(self, temp)
+
+                            #print("Perdiste "+ player +" :(")
+                            #print("\nRecibes " + str(self.points) + " puntos...\n")
                             self.playersInSesion[player] = self.playersInSesion[player] + self.points
                             if self.playersInSesion[player] >= self.maxPoints:
-                                print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                                temp = "Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!"
+                                broadcast_server_messages(self, temp)
+                                # print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
                                 if len(self.playersInSesion) != 1:
                                         self.dead.append(player)
-                            print('\nPasando a siguiente jugador\n')
+                            temp = '\nPasando a siguiente jugador\n'
+                            broadcast_server_messages(self, temp)
+                            # print('\nPasando a siguiente jugador\n')
                             self.points = 2
                             continue
                     elif ans == 3:
                         if self.dtr.symb(self.drawn, "D"):
-                            print("Bien hecho!\nContinuando...\n")
+                            #print("Bien hecho!\nContinuando...\n")
+                            broadcast_server_messages(self, "Bien hecho!\nContinuando...\n" )
                             self.points = self.points * 2
                         else:
-                            print("Perdiste "+ player +" :(")
-                            print("\nRecibes " + str(self.points) + " puntos...\n")
+                            temp = "Perdiste " + player + " :("
+                            broadcast_server_messages(self, temp)
+                            temp = "\n Recibes " +str(self.points) + " puntos... \n"
+                            broadcast_server_messages(self, temp)
+
+                            #print("Perdiste "+ player +" :(")
+                            #print("\nRecibes " + str(self.points) + " puntos...\n")
                             self.playersInSesion[player] = self.playersInSesion[player] + self.points
                             if self.playersInSesion[player] >= self.maxPoints:
-                                print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                                temp = "Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!"
+                                broadcast_server_messages(self, temp)
+                                # print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
                                 if len(self.playersInSesion) != 1:
                                         self.dead.append(player)
-                            print('\nPasando a siguiente jugador\n')
+                            temp = '\nPasando a siguiente jugador\n'
+                            broadcast_server_messages(self, temp)
+                            # print('\nPasando a siguiente jugador\n')
                             self.points = 2
                             continue
                     elif ans == 4:
                         if self.dtr.symb(self.drawn, "C"):
-                            print("Bien hecho!\nContinuando...\n")
+                            # print("Bien hecho!\nContinuando...\n")
+                            broadcast_server_messages(self, "Bien hecho!\nContinuando...\n" )
                             self.points = self.points * 2
                         else:
-                            print("Perdiste "+ player +" :(")
-                            print("\nRecibes " + str(self.points) + " puntos...\n")
+                            temp = "Perdiste " + player + " :("
+                            broadcast_server_messages(self, temp)
+                            temp = "\n Recibes " +str(self.points) + " puntos... \n"
+                            broadcast_server_messages(self, temp)
+
+                            #print("Perdiste "+ player +" :(")
+                            #print("\nRecibes " + str(self.points) + " puntos...\n")
                             self.playersInSesion[player] = self.playersInSesion[player] + self.points
                             if self.playersInSesion[player] >= self.maxPoints:
-                                print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
+                                temp = "Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!"
+                                broadcast_server_messages(self, temp)
+                                # print("Oh noo!\n" + player+ " ha llegado a " + str(self.playersInSesion[player]) + " puntos y debe retirarse.\nBye!")
                                 if len(self.playersInSesion) != 1:
                                         self.dead.append(player)
-                            print('\nPasando a siguiente jugador\n')
+                            temp = '\nPasando a siguiente jugador\n'
+                            broadcast_server_messages(self, temp)
+                            # print('\nPasando a siguiente jugador\n')
                             self.points = 2
                             continue
                     elif ans == 0:
-                        print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
-                        print("\nCerrando juego...\n")
-                        print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                        temp = "~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O \nCerrando juego...\n~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O "
+                        broadcast_server_messages(self, temp)
                         self.turn = False
                         break
                 elif ans == 2:
-                    print('\nPasando a siguiente jugador\n')
+                    broadcast_server_messages(self, "\nPasando a siguiente jugador\n" )
 
                 elif ans == 0:
-                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
-                    print("\nCerrando juego...\n")
-                    print("~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ")
+                    temp = "~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O \nCerrando juego...\n~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O ~ o ~ O "
+                    broadcast_server_messages(self, temp)
                     self.turn = False
                     break
             if len(self.dead) > 0:
@@ -671,6 +767,8 @@ class gameServer:
             self.gamerooms[self.gamerooms_players[player.name]].remove_player(player)
             del self.gamerooms_players[player.name]
         print("Player: " + player.name + " has left \n")
+
+
 
     def client_menu(self, player, command):
         #Menu principal
@@ -739,6 +837,7 @@ class gameServer:
         elif "QUIT" in  command:
             player.socket.sendall(quitting.encode())
             self.remove_player_in_server(player)
+
         else:
             if player.name in self.gamerooms_players:
                 self.gamerooms[self.gamerooms_players[player.name]].broadcast_messages(player, command)

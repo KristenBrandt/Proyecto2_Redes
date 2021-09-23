@@ -6,6 +6,7 @@ server.py
 Proposito: Juego de carta utilizando pygame.
 
 """
+#ip KRISTEN 192.168.1.6
 #TODO
 import select, socket, sys
 from utils import *
@@ -39,6 +40,11 @@ while True:
                 if "NAME" in message:
                     nnn = message.split()[1]
                     player.setName(nnn)
+                elif "QUIT" in message:
+                    player.socket.sendall(b"Saliendo del chat...")
+                    connection_list.remove(player)
+                    player.socket.close()
+                    break
                 gameServer.client_menu(player, message)
 
             else:
